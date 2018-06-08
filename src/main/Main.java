@@ -16,9 +16,8 @@ public class Main {
 		Tokenizer tokenizer = new Tokenizer();
 		tokenizer.tokenize(srcReader.getSrc());
 
-		Parser parser = new Parser(tokenizer.getTokenList());
-		parser.parse();
+		Parser parser = new Parser();
+		parser.parse(tokenizer.getTokenList());
 
 	}
-
 }

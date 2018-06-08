@@ -15,10 +15,10 @@ import java.util.logging.Logger;
 // TODO: allow for multiple source files to be linked with import statements
 public class SourceReader {
 	private static final Logger LOGGER = Logger.getLogger(SourceReader.class.getName());
-	private String src;
+	private SourceCode src;
 
 	public SourceReader() {
-		src = "";
+		src = new SourceCode();
 	}
 
 	public void read(String path) {
@@ -26,18 +26,14 @@ public class SourceReader {
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
 			LOGGER.info("Completed injesting source code");
-			setSrc(new String(encoded, encoding));
+			src.addSource(new String(encoded, encoding));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
-	private void setSrc(String content) {
-		this.src = content;
-	}
 
-	public String getSrc() {
+	public SourceCode getSrc() {
 		return src;
 	}
 }

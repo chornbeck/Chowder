@@ -1,6 +1,6 @@
 package symbol;
 
-public class Symbol {
+abstract public class Symbol {
 	// Name of the symbol (user defined or auto generated for a literal)
 	private String name;
 	// Value of the symbol

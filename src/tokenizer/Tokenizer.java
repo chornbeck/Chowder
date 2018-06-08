@@ -1,8 +1,10 @@
 package tokenizer;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
+import reader.SourceCode;
 import token.CDouble;
 import token.CIdentifier;
 import token.CInteger;
@@ -20,29 +22,26 @@ import token.CWhitespace;
 public class Tokenizer {
 	private static final Logger LOGGER = Logger.getLogger(Tokenizer.class.getName());
 
-	private final char[] specialChar = new char[] { '!', '#', '%', '^', '&', '*', '(', ')', '-', '+', '_', '=', '[',
-			']', '{', '}', ';', ':', '\'', '\"', '.', '<', '>', '/', '|' };
-	private int currentChar;
+	private final List<Character> specialChars = Arrays.asList('!', '#', '%', '^', '&', '*', '(', ')', '-', '+', '_', '=', '[', ']', '{', '}', ';', ':', '\'', '\"', '.', '<', '>', '/', '|');
 
-	private String sourceCode;
-	private ArrayList<CToken> tokenList;
+	private SourceCode sourceCode;
+	private TokenList tokenList;
 
 	public Tokenizer() {
-		tokenList = new ArrayList<>();
+		tokenList = new TokenList();
 		sourceCode = null;
-		currentChar = 0;
 	}
 
-	public ArrayList<CToken> getTokenList() {
+	public TokenList getTokenList() {
 		return tokenList;
 	}
 
-	public void tokenize(String f) {
-		sourceCode = f;
+	public void tokenize(SourceCode s) {
+		sourceCode = s;
 		char c;
 		c = getNextChar();
 		while (c != '\0') {
-			if (currentChar <= sourceCode.length()) {
+			if (sourceCode.hasCharsLeft()) {
 				// if the char is a letter tokenize an identifier
 				if (isAlpha(c)) {
 					// put the letter back
@@ -114,7 +113,7 @@ public class Tokenizer {
 	private void tokenizeIdentifier() {
 		char c;
 		String token = "";
-		while (currentChar < sourceCode.length()) {
+		while (sourceCode.currentCharLessThanLength()) {
 			c = getNextChar();
 			if (isAlpha(c) || isDigit(c) || c == '_') {
 				token += c;
@@ -122,7 +121,7 @@ public class Tokenizer {
 				break;
 			}
 		}
-		if (currentChar < sourceCode.length())
+		if (sourceCode.currentCharLessThanLength())
 			putCharBack();
 		LOGGER.info("Created identifier token: " + token);
 		addToken(new CIdentifier(token));
@@ -133,7 +132,7 @@ public class Tokenizer {
 		boolean seenDecimal = false;
 		String token = "";
 
-		while (currentChar < sourceCode.length()) {
+		while (sourceCode.currentCharLessThanLength()) {
 			c = getNextChar();
 			if (isDigit(c)) {
 				token += c;
@@ -148,7 +147,7 @@ public class Tokenizer {
 				break;
 			}
 		}
-		if (currentChar < sourceCode.length())
+		if (sourceCode.currentCharLessThanLength())
 			putCharBack();
 		if (seenDecimal) {
 			LOGGER.info("Created double token: " + token);
@@ -180,22 +179,15 @@ public class Tokenizer {
 	}
 
 	private char getNextChar() {
-		char c;
-		if (currentChar < sourceCode.length()) {
-			c = sourceCode.charAt(currentChar);
-		} else {
-			c = '\0';
-		}
-		currentChar++;
-		return c;
+		return sourceCode.getNextChar();
 	}
 
 	private void putCharBack() {
-		currentChar--;
+		sourceCode.putCharBack();
 	}
 
 	private void addToken(CToken t) {
-		tokenList.add(t);
+		tokenList.addToken(t);
 	}
 
 	private boolean isAlpha(char c) {
@@ -211,11 +203,6 @@ public class Tokenizer {
 	}
 
 	private boolean isSpecial(char c) {
-		for (int i = 0; i < specialChar.length; i++) {
-			if (c == specialChar[i]) {
-				return true;
-			}
-		}
-		return false;
+		return specialChars.contains(Character.valueOf(c));
 	}
 }

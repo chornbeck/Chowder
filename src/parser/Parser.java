@@ -1,6 +1,8 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import statement.Statement;
@@ -9,6 +11,7 @@ import token.CIdentifier;
 import token.CSpecial;
 import token.CToken;
 import token.CWhitespace;
+import tokenizer.TokenList;
 import tokenizer.Tokenizer;
 
 /**
@@ -19,58 +22,49 @@ import tokenizer.Tokenizer;
  */
 public class Parser {
 	private static final Logger LOGGER = Logger.getLogger(Tokenizer.class.getName());
-	private final String[] keywords = new String[] { "import", "class", "public", "private", "if", "else", "while",
-			"do", "for", "in", "break", "continue", "return", "new", "true", "false", "null" };
+	private final List<String> keywords = Arrays.asList("import", "class", "public", "private", "if", "else", "while", "do", "for", "in", "break", "continue", "return", "new", "true", "false", "null" );
 
-	private ArrayList<CToken> tokenList;
-	private ArrayList<Statement> statementList;
-	private int currentToken;
-
-	public Parser(ArrayList<CToken> t) {
-		currentToken = 0;
-		tokenList = t;
+	private TokenList tokenList;
+	private List<Statement> statementList;
+	public Parser() {
+		tokenList = null;
 		statementList = new ArrayList<>();
 	}
 
-	public void parse() {
-		CToken t;
-		t = getNextToken();
+	public void parse(TokenList tl) {
+		tokenList = tl;
+		CToken t = getNextToken();
 		while (t != null) {
-			if (currentToken <= tokenList.size()) {
+			if (tokenList.hasTokensLeft()) {
 				if (t instanceof CIdentifier) {
 					if (isKeyword(t)) {
 						if (t.getID().equals("if")) {
-
+							
 						} else if (t.getID().equals("while")) {
 
 						} else if (t.getID().equals("for")) {
 
 						}
 					} else {
-						// Parse a variable declaration or an assignment
-						// statement
-						// x = 1
-						// x
+						// Parse a variable declaration or an assignment statement
 						putTokenBack();
 						parseAssignment();
 					}
 				} else {
-					// all statements start with an identifier, how'd we get
-					// here
+					// all statements start with an identifier, how'd we get here
 				}
 			}
 			t = getNextToken();
 		}
 	}
 
-	public ArrayList<Statement> getStatementList() {
+	public List<Statement> getStatementList() {
 		return statementList;
 	}
 
 	private void parseAssignment() {
 		AssignmentStatement as = new AssignmentStatement();
-		CToken t;
-		t = getNextToken();
+		CToken t = getNextToken();
 
 		as.setLhs(t);
 		t = getNextToken();
@@ -95,18 +89,11 @@ public class Parser {
 	}
 
 	private CToken getNextToken() {
-		CToken t;
-		if (currentToken < tokenList.size()) {
-			t = tokenList.get(currentToken);
-		} else {
-			t = null;
-		}
-		currentToken++;
-		return t;
+		return tokenList.getNextToken();
 	}
 
 	private void putTokenBack() {
-		currentToken--;
+		tokenList.putTokenBack();
 	}
 
 	private void addStatement(Statement s) {
@@ -114,11 +101,6 @@ public class Parser {
 	}
 
 	private boolean isKeyword(CToken t) {
-		for (int i = 0; i < keywords.length; i++) {
-			if (t.getID().equals(keywords[i])) {
-				return true;
-			}
-		}
-		return false;
+		return keywords.contains(t);
 	}
 }

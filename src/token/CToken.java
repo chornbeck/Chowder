@@ -1,6 +1,6 @@
 package token;
 
-public class CToken {
+abstract public class CToken {
 	// ascii representation of the literal token
 	private String id;
 	protected Object value;

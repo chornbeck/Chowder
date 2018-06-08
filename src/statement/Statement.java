@@ -7,6 +7,6 @@ package statement;
  * @author Casey
  *
  */
-public class Statement {
+abstract public class Statement {
 
 }
