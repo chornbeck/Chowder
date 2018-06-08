@@ -5,6 +5,12 @@ import java.util.List;
 
 import token.CToken;
 
+/**
+ * Class to handle the manipulation of the token list.
+ * This class contains the entire parsed tokens for a program
+ * @author Casey
+ *
+ */
 public class TokenList {
 	private List<CToken> tokenList;
 	private int currentToken;

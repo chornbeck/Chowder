@@ -1,5 +1,11 @@
 package reader;
 
+/**
+ * Class to handle the manipulation of source code characters.  
+ * This class will contain the entire source code content for a program
+ * @author Casey
+ *
+ */
 public class SourceCode {
 	private int currentChar;
 	private StringBuilder sourceCode;

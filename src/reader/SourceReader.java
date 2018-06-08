@@ -25,7 +25,7 @@ public class SourceReader {
 		Charset encoding = Charset.defaultCharset();
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(path));
-			LOGGER.info("Completed injesting source code");
+			LOGGER.info("Completed ingesting source code");
 			src.addSource(new String(encoded, encoding));
 		} catch (IOException e) {
 			e.printStackTrace();
